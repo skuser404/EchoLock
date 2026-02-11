@@ -489,10 +489,10 @@ furnished to do so, subject to the following conditions:
 Final Year B.Tech - Computer Science & Engineering  
 Specialization: Cybersecurity & Machine Learning  
 
-📧 Email: your.email@example.com  
+📧 Email: sk9030973224@gmail.com  
 🔗 LinkedIn: [linkedin.com/in/gsunilkumarcybersecurity](https://www.linkedin.com/in/gsunilkumarcybersecurity)  
-🐙 GitHub: [github.com/yourusername](https://github.com/yourusername)  
-🌐 Portfolio: [yourwebsite.com](https://yourwebsite.com)
+🐙 GitHub: [github.com/skuser404](https://github.com/skuser404)  
+🌐 Portfolio: [My view](https://6grbtklu5fjjy.ok.kimi.link)
 
 ---
 
@@ -511,8 +511,8 @@ Specialization: Cybersecurity & Machine Learning
 
 For questions, issues, or suggestions:
 
-- **GitHub Issues**: [Open an issue](https://github.com/yourusername/EchoLock/issues)
-- **Email**: your.email@example.com
+- **GitHub Issues**: [Open an issue](https://github.com/skuser404/EchoLock/issues)
+- **Email**: sk9030973224@gmail.com
 - **Documentation**: Check `/docs` folder
 
 ---
