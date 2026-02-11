@@ -52,52 +52,52 @@ This project demonstrates real-world cybersecurity engineering, machine learning
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     User Interface (Flask)                   │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │   Register   │  │    Login     │  │   Dashboard  │      │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │
-└─────────┼──────────────────┼──────────────────┼─────────────┘
-          │                  │                  │
-          ▼                  ▼                  ▼
+│                     User Interface (Flask)                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
+│  │   Register   │  │    Login     │  │   Dashboard  │       │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘       │
+└─────────┼─────────────────┼─────────────────┼───────────────┘
+          │                 │                 │
+          ▼                 ▼                 ▼
 ┌─────────────────────────────────────────────────────────────┐
-│              Keystroke Capture Module (JS + Python)          │
-│  • Key Press/Release Events  • Timestamp Recording           │
-│  • Dwell Time Calculation    • Flight Time Calculation       │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-                      ▼
+│              Keystroke Capture Module (JS + Python)         │
+│  • Key Press/Release Events  • Timestamp Recording          │
+│  • Dwell Time Calculation    • Flight Time Calculation      │
+└────────────────────────────┬────────────────────────────────┘
+                             │
+                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│              Feature Engineering Module                      │
+│              Feature Engineering Module                     │
 │  • Mean/Std Dwell Time  • Inter-key Latency Vectors         │
-│  • Typing Speed         • Normalization (Z-score)            │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-                      ▼
+│  • Typing Speed         • Normalization (Z-score)           │
+└────────────────────────────┬────────────────────────────────┘
+                             │
+                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│              Machine Learning Pipeline                       │
-│  ┌─────────────────────┐  ┌─────────────────────┐          │
-│  │  One-Class SVM      │  │  Random Forest      │          │
-│  │  (Anomaly Detection)│  │  (Classification)   │          │
-│  │  Per-user models    │  │  Multi-user model   │          │
-│  └──────────┬──────────┘  └──────────┬──────────┘          │
-└─────────────┼──────────────────────────┼───────────────────┘
-              │                          │
-              └───────────┬──────────────┘
-                          ▼
+│              Machine Learning Pipeline                      │
+│  ┌─────────────────────┐     ┌─────────────────────┐        │
+│  │  One-Class SVM      │     │  Random Forest      │        │
+│  │  (Anomaly Detection)│     │  (Classification)   │        │
+│  │  Per-user models    │     │  Multi-user model   │        │
+│  └──────────┬──────────┘     └──────────┬──────────┘        │
+└─────────────┼───────────────────────────┼───────────────────┘
+              │                           │
+              └─────────────┬─────────────┘
+                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│              Authentication Engine                           │
-│  • Password Verification (Hash Comparison)                   │
-│  • Typing Pattern Scoring (ML Prediction)                    │
-│  • Confidence Threshold (Configurable)                       │
-│  • Decision: ACCEPT / REJECT                                 │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-                      ▼
+│              Authentication Engine                          │
+│  • Password Verification (Hash Comparison)                  │
+│  • Typing Pattern Scoring (ML Prediction)                   │
+│  • Confidence Threshold (Configurable)                      │
+│  • Decision: ACCEPT / REJECT                                │
+└───────────────────────────┬─────────────────────────────────┘
+                            │
+                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│              Database Layer (SQLite)                         │
-│  • Users Table (ID, Username, Password Hash)                 │
-│  • Keystrokes Table (UserID, Timestamp, Features)            │
-│  • Sessions Table (SessionID, UserID, LoginTime)             │
+│              Database Layer (SQLite)                        │
+│  • Users Table (ID, Username, Password Hash)                │
+│  • Keystrokes Table (UserID, Timestamp, Features)           │
+│  • Sessions Table (SessionID, UserID, LoginTime)            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
