@@ -1,11 +1,11 @@
-# 🔐 EchoLock: Typing Pattern Login Security System
+# EchoLock: Typing Pattern Login Security System
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![ML](https://img.shields.io/badge/ML-Scikit--Learn-orange.svg)
 ![Flask](https://img.shields.io/badge/Framework-Flask-green.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-## 📌 Overview
+## Overview
 
 **EchoLock** is an advanced behavioral biometrics authentication system that combines traditional password-based security with **keystroke dynamics** to create a multi-factor authentication mechanism. By analyzing unique typing patterns (dwell time, flight time, and rhythm), EchoLock adds an invisible security layer that's nearly impossible to replicate—even if passwords are compromised.
 
@@ -13,7 +13,7 @@ This project demonstrates real-world cybersecurity engineering, machine learning
 
 ---
 
-## 🎯 Why Behavioral Biometrics?
+## Why Behavioral Biometrics?
 
 ### The Problem
 - **70% of data breaches** involve stolen credentials (Verizon DBIR)
@@ -28,7 +28,7 @@ This project demonstrates real-world cybersecurity engineering, machine learning
 
 ---
 
-## ✨ Features
+## Features
 
 ### Core Functionality
 - ✅ **Real-time Keystroke Capture** - Records key press/release timestamps with millisecond precision
@@ -48,7 +48,7 @@ This project demonstrates real-world cybersecurity engineering, machine learning
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -103,7 +103,7 @@ This project demonstrates real-world cybersecurity engineering, machine learning
 
 ---
 
-## ⌨️ Keystroke Dynamics Explained
+## Keystroke Dynamics Explained
 
 ### Key Metrics Captured
 
@@ -136,7 +136,7 @@ This project demonstrates real-world cybersecurity engineering, machine learning
 
 ---
 
-## 🤖 Machine Learning Models Used
+## Machine Learning Models Used
 
 ### 1. One-Class SVM (Anomaly Detection)
 **Purpose**: Learns the "normal" typing pattern of a legitimate user
@@ -193,7 +193,7 @@ def authenticate(username, password, typing_features):
 
 ---
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 - Python 3.8 or higher
@@ -239,7 +239,7 @@ http://localhost:5000
 
 ---
 
-## 📖 Usage Instructions
+## Usage Instructions
 
 ### For New Users (Registration)
 1. Navigate to `http://localhost:5000/register`
@@ -254,8 +254,8 @@ http://localhost:5000
 2. Enter your username and password
 3. System analyzes your typing pattern in real-time
 4. **Two-factor verification**:
-   - ✅ Password matches database
-   - ✅ Typing pattern matches your profile
+   -  Password matches database
+   -  Typing pattern matches your profile
 5. If both pass → Access granted
 6. If typing pattern deviates → Access denied (potential impostor)
 
@@ -267,7 +267,7 @@ http://localhost:5000
 
 ---
 
-## 📊 Sample Results
+## Sample Results
 
 ### Experiment Setup
 - **Users**: 10 registered users
@@ -286,10 +286,10 @@ http://localhost:5000
 | **F1-Score** | 88.7% | 92.2% | 96.5% |
 
 ### Key Findings
-✅ **Hybrid approach outperforms individual models** by 4-7%  
-✅ **False Accept Rate reduced by 60%** with dual verification  
-✅ **Typing patterns remain stable** over 30-day period (94% consistency)  
-✅ **Detects credential theft** even with correct passwords (87% success rate)
+ **Hybrid approach outperforms individual models** by 4-7%  
+ **False Accept Rate reduced by 60%** with dual verification  
+ **Typing patterns remain stable** over 30-day period (94% consistency)  
+ **Detects credential theft** even with correct passwords (87% success rate)
 
 ### Visualization Example
 ```
@@ -304,7 +304,7 @@ Overall Confidence: 94.2%  ✅ AUTHENTICATED
 
 ---
 
-## 🔒 Security Considerations
+## Security Considerations
 
 ### Implemented Security Measures
 1. **Password Protection**
@@ -330,10 +330,10 @@ Overall Confidence: 94.2%  ✅ AUTHENTICATED
    - User consent required
 
 ### Known Limitations
-⚠️ **Typing Variability**: User fatigue, injury, or device change affects accuracy  
-⚠️ **Replay Attacks**: Recorded keystroke timing can be replayed (mitigation: timestamp validation)  
-⚠️ **Sample Size**: Requires 10-15 training samples for optimal accuracy  
-⚠️ **Noise Sensitivity**: Distracted typing may trigger false rejections
+**Typing Variability**: User fatigue, injury, or device change affects accuracy  
+**Replay Attacks**: Recorded keystroke timing can be replayed (mitigation: timestamp validation)  
+**Sample Size**: Requires 10-15 training samples for optimal accuracy  
+**Noise Sensitivity**: Distracted typing may trigger false rejections
 
 ### Mitigation Strategies
 - **Adaptive Learning**: Continuously update typing profile
@@ -343,7 +343,7 @@ Overall Confidence: 94.2%  ✅ AUTHENTICATED
 
 ---
 
-## ⚖️ Ethical Disclaimer
+## Ethical Disclaimer
 
 ### Responsible Use Statement
 This project is designed **exclusively for educational and research purposes** to demonstrate cybersecurity principles, behavioral biometrics, and machine learning applications.
@@ -361,14 +361,14 @@ This project is designed **exclusively for educational and research purposes** t
 ✅ **GDPR/CCPA Compliance**: Respect user privacy rights  
 
 ### Intended Audience
-- 🎓 Computer Science students learning cybersecurity
-- 🔬 Researchers studying behavioral biometrics
-- 🏢 Organizations implementing secure authentication
-- 👨‍💻 Developers building ethical security systems
+- Computer Science students learning cybersecurity
+- Researchers studying behavioral biometrics
+- Organizations implementing secure authentication
+- Developers building ethical security systems
 
 ---
 
-## 🚀 Future Enhancements
+## Future Enhancements
 
 ### Planned Features (v2.0)
 - [ ] **Multi-device Support**: Cross-device typing profile synchronization
@@ -388,7 +388,7 @@ This project is designed **exclusively for educational and research purposes** t
 
 ---
 
-## 📚 Technical Documentation
+## Technical Documentation
 
 Detailed documentation available in `/docs`:
 
@@ -400,7 +400,7 @@ Detailed documentation available in `/docs`:
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 EchoLock/
@@ -444,7 +444,7 @@ EchoLock/
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please follow these guidelines:
 
@@ -462,7 +462,7 @@ Contributions are welcome! Please follow these guidelines:
 
 ---
 
-## 📜 License
+## License
 
 This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file for details.
 
@@ -483,20 +483,20 @@ furnished to do so, subject to the following conditions:
 
 ---
 
-## 👨‍💻 Author
+## Author
 
-**Your Name**  
+**G Sunil Kumar**  
 Final Year B.Tech - Computer Science & Engineering  
 Specialization: Cybersecurity & Machine Learning  
 
 📧 Email: your.email@example.com  
-🔗 LinkedIn: [linkedin.com/in/yourprofile](https://linkedin.com/in/yourprofile)  
+🔗 LinkedIn: [linkedin.com/in/gsunilkumarcybersecurity](https://www.linkedin.com/in/gsunilkumarcybersecurity)  
 🐙 GitHub: [github.com/yourusername](https://github.com/yourusername)  
 🌐 Portfolio: [yourwebsite.com](https://yourwebsite.com)
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Scikit-learn** - Machine learning framework
 - **Flask** - Web framework
