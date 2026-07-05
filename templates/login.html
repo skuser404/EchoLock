@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - EchoLock</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🔐 EchoLock</div>
+            <p class="tagline">Authenticate with your typing pattern</p>
+        </header>
+
+        <div class="card">
+            <h2 class="card-title">
+                <span class="icon">🔑</span>
+                Authentication
+            </h2>
+
+            <div id="statusMessage" class="status-message hidden"></div>
+
+            <form id="loginForm" onsubmit="event.preventDefault();">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="pinInput">Enter Your PIN</label>
+                    <input type="password" id="pinInput" class="pin-input" maxlength="6" 
+                           placeholder="Type your PIN" autocomplete="off" required>
+                    <small style="color: var(--text-secondary);">Type naturally - we analyze your typing pattern, not just the PIN</small>
+                </div>
+
+                <div class="instructions">
+                    <h4>Authentication Process:</h4>
+                    <ul>
+                        <li>Enter your username and PIN</li>
+                        <li>Our AI analyzes your <strong>typing rhythm</strong> (dwell time & flight time)</li>
+                        <li>High match → Immediate access</li>
+                        <li>Medium match → OTP verification required</li>
+                        <li>Low match → Access denied</li>
+                    </ul>
+                </div>
+
+                <div class="typing-visualizer" id="typingVisualizer">
+                    Type your PIN to begin authentication...
+                </div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn btn-primary" onclick="authenticateUser()">
+                        <span>🔐</span> Authenticate
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetTypingData()">
+                        <span>🔄</span> Clear
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="authResult" class="card hidden">
+            <h3 class="card-title">
+                <span class="icon">📊</span>
+                Authentication Result
+            </h3>
+            <div id="resultContainer"></div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="/" class="btn btn-secondary">
+                <span>🏠</span> Back to Home
+            </a>
+            <a href="/register" class="btn btn-secondary">
+                <span>📝</span> Register New User
+            </a>
+        </div>
+
+        <footer>
+            <p>EchoLock - AI Behavioral Biometrics Demo</p>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
