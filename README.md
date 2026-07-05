@@ -1,539 +1,268 @@
-# EchoLock: Typing Pattern Login Security System
-
-![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![ML](https://img.shields.io/badge/ML-Scikit--Learn-orange.svg)
-![Flask](https://img.shields.io/badge/Framework-Flask-green.svg)
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
-
-## Overview
-
-**EchoLock** is an advanced behavioral biometrics authentication system that combines traditional password-based security with **keystroke dynamics** to create a multi-factor authentication mechanism. By analyzing unique typing patterns (dwell time, flight time, and rhythm), EchoLock adds an invisible security layer that's nearly impossible to replicate—even if passwords are compromised.
-
-This project demonstrates real-world cybersecurity engineering, machine learning integration, and secure web application development—ideal for final-year engineering projects and cybersecurity portfolios.
-
----
-
-## Why Behavioral Biometrics?
-
-### The Problem
-- **70% of data breaches** involve stolen credentials (Verizon DBIR)
-- Passwords can be phished, cracked, or leaked
-- Traditional 2FA requires extra hardware/apps
-
-### The Solution: Keystroke Dynamics
-- **Transparent**: No additional user effort required
-- **Continuous**: Validates identity during typing
-- **Unique**: Each person has distinct typing rhythm (like a fingerprint)
-- **Fraud-resistant**: Cannot be easily stolen or replicated
-
----
-
-## Features
-
-### Core Functionality
-- ✅ **Real-time Keystroke Capture** - Records key press/release timestamps with millisecond precision
-- ✅ **Feature Extraction** - Computes dwell time, flight time, typing speed metrics
-- ✅ **Dual ML Models** - One-Class SVM (anomaly detection) + Random Forest (classification)
-- ✅ **Hybrid Authentication** - Password verification + typing pattern matching
-- ✅ **Web Interface** - Flask-based responsive login/registration system
-- ✅ **Visualization Dashboard** - Real-time typing pattern analysis graphs
-- ✅ **Secure Storage** - SQLite database with hashed passwords (SHA-256)
-
-### Security Features
-- 🔒 Password hashing with salt
-- 🔒 Session management
-- 🔒 SQL injection prevention
-- 🔒 Rate limiting support
-- 🔒 Ethical keylogging (in-app only)
-
----
-
-## System Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     User Interface (Flask)                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
-│  │   Register   │  │    Login     │  │   Dashboard  │       │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘       │
-└─────────┼─────────────────┼─────────────────┼───────────────┘
-          │                 │                 │
-          ▼                 ▼                 ▼
-┌─────────────────────────────────────────────────────────────┐
-│              Keystroke Capture Module (JS + Python)         │
-│  • Key Press/Release Events  • Timestamp Recording          │
-│  • Dwell Time Calculation    • Flight Time Calculation      │
-└────────────────────────────┬────────────────────────────────┘
-                             │
-                             ▼
-┌─────────────────────────────────────────────────────────────┐
-│              Feature Engineering Module                     │
-│  • Mean/Std Dwell Time  • Inter-key Latency Vectors         │
-│  • Typing Speed         • Normalization (Z-score)           │
-└────────────────────────────┬────────────────────────────────┘
-                             │
-                             ▼
-┌─────────────────────────────────────────────────────────────┐
-│              Machine Learning Pipeline                      │
-│  ┌─────────────────────┐     ┌─────────────────────┐        │
-│  │  One-Class SVM      │     │  Random Forest      │        │
-│  │  (Anomaly Detection)│     │  (Classification)   │        │
-│  │  Per-user models    │     │  Multi-user model   │        │
-│  └──────────┬──────────┘     └──────────┬──────────┘        │
-└─────────────┼───────────────────────────┼───────────────────┘
-              │                           │
-              └─────────────┬─────────────┘
-                            ▼
-┌─────────────────────────────────────────────────────────────┐
-│              Authentication Engine                          │
-│  • Password Verification (Hash Comparison)                  │
-│  • Typing Pattern Scoring (ML Prediction)                   │
-│  • Confidence Threshold (Configurable)                      │
-│  • Decision: ACCEPT / REJECT                                │
-└───────────────────────────┬─────────────────────────────────┘
-                            │
-                            ▼
-┌─────────────────────────────────────────────────────────────┐
-│              Database Layer (SQLite)                        │
-│  • Users Table (ID, Username, Password Hash)                │
-│  • Keystrokes Table (UserID, Timestamp, Features)           │
-│  • Sessions Table (SessionID, UserID, LoginTime)            │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Keystroke Dynamics Explained
-
-### Key Metrics Captured
-
-1. **Dwell Time (Hold Time)**
-   - Time between key press → key release
-   - Formula: `dwell_time = release_timestamp - press_timestamp`
-   - Unique to each person's finger muscle memory
-
-2. **Flight Time (Inter-key Latency)**
-   - Time between releasing one key → pressing next key
-   - Formula: `flight_time = next_press_timestamp - current_release_timestamp`
-   - Captures typing rhythm and transitions
-
-3. **Typing Speed**
-   - Overall words per minute (WPM)
-   - Characters per second (CPS)
-
-### Feature Vector Example
-```python
-[
-    mean_dwell_time,          # Average hold time
-    std_dwell_time,           # Variance in hold time
-    mean_flight_time,         # Average inter-key delay
-    std_flight_time,          # Variance in inter-key delay
-    total_typing_time,        # Complete input duration
-    typing_speed_cps,         # Characters per second
-    error_rate               # Backspace frequency
-]
-```
-
----
-
-## Machine Learning Models Used
-
-### 1. One-Class SVM (Anomaly Detection)
-**Purpose**: Learns the "normal" typing pattern of a legitimate user
-
-- **Algorithm**: Support Vector Machine with RBF kernel
-- **Training Data**: Only legitimate user's typing samples
-- **Output**: Binary decision (same user / impostor)
-- **Advantage**: Detects unknown attack patterns
-
-```python
-from sklearn.svm import OneClassSVM
-
-model = OneClassSVM(kernel='rbf', gamma='auto', nu=0.1)
-model.fit(user_typing_samples)
-prediction = model.predict(new_typing_sample)  # 1: legitimate, -1: impostor
-```
-
-### 2. Random Forest Classifier
-**Purpose**: Multi-user classification for user identification
-
-- **Algorithm**: Ensemble of decision trees
-- **Training Data**: Typing samples from all registered users
-- **Output**: User ID prediction + confidence score
-- **Advantage**: Handles noisy data, feature importance analysis
-
-```python
-from sklearn.ensemble import RandomForestClassifier
-
-model = RandomForestClassifier(n_estimators=100, max_depth=10)
-model.fit(all_users_features, user_labels)
-predicted_user = model.predict(new_typing_sample)
-confidence = model.predict_proba(new_typing_sample)
-```
-
-### Hybrid Authentication Logic
-```python
-def authenticate(username, password, typing_features):
-    # Step 1: Verify password
-    if not verify_password(username, password):
-        return False, "Invalid password"
-    
-    # Step 2: One-Class SVM anomaly detection
-    svm_score = one_class_svm.decision_function(typing_features)
-    if svm_score < THRESHOLD_1:
-        return False, "Typing pattern mismatch (anomaly detected)"
-    
-    # Step 3: Random Forest user identification
-    predicted_user, confidence = random_forest.predict(typing_features)
-    if predicted_user != username or confidence < THRESHOLD_2:
-        return False, "Typing pattern doesn't match user profile"
-    
-    return True, "Authentication successful"
-```
-
----
-
-## Installation & Setup
-
-### Prerequisites
-- Python 3.8 or higher
-- pip package manager
-- Modern web browser (Chrome/Firefox recommended)
-
-### Step 1: Clone Repository
-```bash
-git clone https://github.com/yourusername/EchoLock.git
-cd EchoLock
-```
-
-### Step 2: Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### Step 3: Initialize Database
-```bash
-python src/database.py
-```
-
-### Step 4: Generate Sample Training Data (Optional)
-```bash
-python src/utils.py --generate-data --users 5 --samples 20
-```
-
-### Step 5: Train Models
-```bash
-python src/model_training.py
-```
-
-### Step 6: Run Application
-```bash
-python src/app.py
-```
-
-### Step 7: Access Web Interface
-Open browser and navigate to:
-```
-http://localhost:5000
-```
-
----
-
-## Usage Instructions
-
-### For New Users (Registration)
-1. Navigate to `http://localhost:5000/register`
-2. Enter desired username and password
-3. Type the password **5 times** to train your typing profile
-4. System captures your unique keystroke pattern
-5. Machine learning models are trained on your typing data
-6. Registration complete!
-
-### For Existing Users (Login)
-1. Navigate to `http://localhost:5000/login`
-2. Enter your username and password
-3. System analyzes your typing pattern in real-time
-4. **Two-factor verification**:
-   -  Password matches database
-   -  Typing pattern matches your profile
-5. If both pass → Access granted
-6. If typing pattern deviates → Access denied (potential impostor)
-
-### Dashboard Features
-- View your typing pattern graph
-- See authentication confidence score
-- Update typing profile (re-train with new samples)
-- Security log of login attempts
-
----
-
-## Sample Results
-
-### Experiment Setup
-- **Users**: 10 registered users
-- **Training Samples**: 15 typing samples per user
-- **Test Cases**: 50 legitimate logins + 50 impostor attempts
-
-### Performance Metrics
-
-| Metric | One-Class SVM | Random Forest | Hybrid System |
-|--------|---------------|---------------|---------------|
-| **Accuracy** | 89.2% | 92.5% | 96.8% |
-| **False Accept Rate (FAR)** | 8.5% | 5.2% | 2.1% |
-| **False Reject Rate (FRR)** | 13.8% | 9.7% | 4.5% |
-| **Precision** | 91.3% | 94.1% | 97.6% |
-| **Recall** | 86.2% | 90.3% | 95.5% |
-| **F1-Score** | 88.7% | 92.2% | 96.5% |
-
-### Key Findings
- **Hybrid approach outperforms individual models** by 4-7%  
- **False Accept Rate reduced by 60%** with dual verification  
- **Typing patterns remain stable** over 30-day period (94% consistency)  
- **Detects credential theft** even with correct passwords (87% success rate)
-
-### Visualization Example
-```
-Legitimate User Login Attempt:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Dwell Time Pattern:    ████████████░░░░  (Match: 94%)
-Flight Time Pattern:   ███████████░░░░░  (Match: 91%)
-Typing Speed:          ██████████████░░  (Match: 97%)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Overall Confidence: 94.2%  ✅ AUTHENTICATED
-```
-
----
-
-## Security Considerations
-
-### Implemented Security Measures
-1. **Password Protection**
-   - SHA-256 hashing with unique salts
-   - No plaintext password storage
-   
-2. **SQL Injection Prevention**
-   - Parameterized queries
-   - Input validation and sanitization
-
-3. **Session Security**
-   - Secure session cookies
-   - CSRF token protection
-   - Auto-logout after inactivity
-
-4. **Rate Limiting**
-   - Max 5 login attempts per 15 minutes
-   - Account lockout after repeated failures
-
-5. **Data Privacy**
-   - Keystroke data stored locally
-   - No external transmission
-   - User consent required
-
-### Known Limitations
-**Typing Variability**: User fatigue, injury, or device change affects accuracy  
-**Replay Attacks**: Recorded keystroke timing can be replayed (mitigation: timestamp validation)  
-**Sample Size**: Requires 10-15 training samples for optimal accuracy  
-**Noise Sensitivity**: Distracted typing may trigger false rejections
-
-### Mitigation Strategies
-- **Adaptive Learning**: Continuously update typing profile
-- **Confidence Thresholds**: Allow "low confidence" mode for known issues
-- **Challenge-Response**: Additional verification for suspicious patterns
-- **Time-based Validation**: Check if keystroke timing aligns with typing speed physically possible
-
----
-
-## Ethical Disclaimer
-
-### Responsible Use Statement
-This project is designed **exclusively for educational and research purposes** to demonstrate cybersecurity principles, behavioral biometrics, and machine learning applications.
-
-### Prohibited Uses
-❌ Unauthorized monitoring of individuals  
-❌ Deployment without explicit user consent  
-❌ Keylogging outside the application context  
-❌ Privacy invasion or surveillance  
-
-### Compliance Requirements
-✅ **User Consent**: Always obtain explicit permission before capturing keystroke data  
-✅ **Transparency**: Inform users about data collection and usage  
-✅ **Data Minimization**: Collect only necessary keystroke metrics  
-✅ **GDPR/CCPA Compliance**: Respect user privacy rights  
-
-### Intended Audience
-- Computer Science students learning cybersecurity
-- Researchers studying behavioral biometrics
-- Organizations implementing secure authentication
-- Developers building ethical security systems
-
----
-
-## Future Enhancements
-
-### Planned Features (v2.0)
-- [ ] **Multi-device Support**: Cross-device typing profile synchronization
-- [ ] **Deep Learning Models**: LSTM/GRU for temporal pattern analysis
-- [ ] **Mobile App**: Android/iOS keystroke authentication
-- [ ] **Voice Biometrics**: Combine typing + voice patterns
-- [ ] **Blockchain Integration**: Decentralized credential storage
-- [ ] **Real-time Monitoring**: Live typing pattern visualization
-- [ ] **API Development**: RESTful API for integration with other systems
-- [ ] **Explainable AI**: SHAP/LIME for decision transparency
-
-### Research Extensions
-- Compare effectiveness across different keyboard types (mechanical vs. membrane)
-- Study impact of stress/emotion on typing patterns
-- Investigate cross-language typing behavior
-- Develop countermeasures against AI-based mimicry attacks
-
----
-
-## Technical Documentation
-
-Detailed documentation available in `/docs`:
-
-- **[Problem Statement](docs/problem_statement.md)** - Project motivation and scope
-- **[System Architecture](docs/system_architecture.md)** - Detailed design diagrams
-- **[Dataset Description](docs/dataset_description.md)** - Data structure and schema
-- **[ML Models](docs/ml_models.md)** - Algorithm selection and tuning
-- **[Workflow](docs/workflow.md)** - Step-by-step process flow
-
----
-
-## Project Structure
+# 🔐 EchoLock: AI-Based Behavioral Biometric Authentication System
+
+EchoLock is a complete, working demonstration of behavioral biometric authentication using typing pattern analysis. The system uses machine learning (KNN classifier) to analyze keystroke dynamics including dwell time and flight time to verify user identity.
+
+## 📋 Features
+
+- **User Registration**: Create a biometric profile by typing your PIN 5 times
+- **Behavioral Analysis**: Captures 9 different typing metrics including:
+  - Average dwell time (how long keys are held)
+  - Average flight time (time between key releases and presses)
+  - Typing consistency (standard deviation)
+  - Typing speed (WPM)
+- **Smart Authentication**: Three-tier decision system:
+  - 🟢 **Access Granted** (Similarity ≥ 80%)
+  - 🟡 **OTP Required** (Similarity 50-80%)
+  - 🔴 **Access Denied** (Similarity < 50%)
+- **Demo OTP System**: Built-in OTP verification for medium-confidence matches
+- **Real-time Visualization**: Live typing pattern capture display
+
+## 🛠️ Tech Stack
+
+- **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
+- **Backend**: Python, Flask
+- **Machine Learning**: Scikit-learn (KNN Classifier), NumPy
+- **Data Storage**: JSON file-based database
+
+## 📁 Project Structure
 
 ```
 EchoLock/
-├── README.md                    # This file
-├── requirements.txt             # Python dependencies
-├── LICENSE                      # MIT License
-├── .gitignore                   # Git ignore rules
 │
-├── docs/                        # Documentation
-│   ├── problem_statement.md
-│   ├── system_architecture.md
-│   ├── dataset_description.md
-│   ├── ml_models.md
-│   └── workflow.md
+├── app.py                 # Flask backend API
+├── model.py               # ML logic for typing pattern analysis
+├── database.json          # User profiles storage
+├── requirements.txt       # Python dependencies
 │
-├── src/                         # Source code
-│   ├── app.py                   # Flask web application
-│   ├── keystroke_capture.py     # Capture keystroke events
-│   ├── feature_extraction.py    # Extract ML features
-│   ├── model_training.py        # Train ML models
-│   ├── authenticator.py         # Authentication engine
-│   ├── database.py              # SQLite database handler
-│   └── utils.py                 # Helper functions
+├── templates/
+│   ├── index.html        # Home page
+│   ├── register.html     # User registration
+│   └── login.html        # Authentication page
 │
-├── data/                        # Data storage
-│   ├── raw_keystrokes.csv       # Raw keystroke logs
-│   └── processed_features.csv   # Processed feature vectors
-│
-├── models/                      # Trained ML models
-│   ├── oneclass_svm.pkl
-│   └── random_forest.pkl
-│
-├── static/                      # Static web assets
-│   └── styles.css               # CSS styling
-│
-└── templates/                   # HTML templates
-    ├── login.html
-    ├── register.html
-    └── result.html
+└── static/
+    ├── style.css         # Modern UI styling
+    └── script.js         # Typing capture & UI logic
 ```
 
----
+## 🚀 Installation & Setup
 
-## Contributing
+### Step 1: Install Python Dependencies
 
-Contributions are welcome! Please follow these guidelines:
+```bash
+# Navigate to project directory
+cd EchoLock
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### Code Standards
-- Follow PEP 8 style guide
-- Add docstrings to all functions
-- Include unit tests for new features
-- Update documentation accordingly
-
----
-
-## License
-
-This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file for details.
-
-```
-MIT License
-
-Copyright (c) 2026 EchoLock Project
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-[Full MIT License text...]
+# Install required packages
+pip install -r requirements.txt
 ```
 
+### Step 2: Run the Flask Application
+
+```bash
+# Start the server
+python app.py
+```
+
+You should see:
+```
+============================================================
+EchoLock: AI-Based Behavioral Biometric Authentication
+============================================================
+Starting server on http://127.0.0.1:5000
+============================================================
+```
+
+### Step 3: Open in Browser
+
+Navigate to: **http://127.0.0.1:5000**
+
+## 📖 Usage Guide
+
+### 1. Register a New User
+
+1. Click "Register New User"
+2. Enter a username
+3. Choose a 4-6 digit PIN
+4. Type your PIN **5 times** at your natural speed
+   - Type consistently - the system learns your rhythm
+   - Don't rush or change your typing style
+5. Click "Complete Registration"
+
+### 2. Authenticate
+
+1. Click "Login"
+2. Enter your username
+3. Type your PIN naturally
+4. Click "Authenticate"
+5. View the result:
+   - **Green (80%+ match)**: Immediate access granted
+   - **Yellow (50-80% match)**: OTP verification required
+   - **Red (<50% match)**: Access denied
+
+### 3. Testing Different Scenarios
+
+**To see "Access Granted":**
+- Login immediately after registration
+- Type at the same speed and rhythm
+
+**To see "OTP Required":**
+- Wait a few minutes before logging in
+- Type slightly faster or slower
+- Use a different keyboard
+
+**To see "Access Denied":**
+- Ask a friend to type your PIN
+- Type extremely fast or slow
+- Use only one hand
+
+## 🔬 How It Works
+
+### Typing Features Extracted
+
+1. **Dwell Time**: How long each key is pressed
+2. **Flight Time**: Time between releasing one key and pressing the next
+3. **Consistency**: Standard deviation of timing patterns
+4. **Speed**: Words per minute calculation
+5. **Pattern**: Min/max timing values
+
+### ML Algorithm
+
+- **Algorithm**: K-Nearest Neighbors (KNN)
+- **Similarity Metric**: Weighted Euclidean distance
+- **Normalization**: Exponential decay function (0-100 scale)
+- **Thresholds**: 
+  - High confidence: ≥80%
+  - Medium confidence: 50-80%
+  - Low confidence: <50%
+
+### Security Model
+
+```
+User Input
+    ↓
+PIN Verification (Knowledge factor)
+    ↓
+Typing Pattern Analysis (Inherence factor)
+    ↓
+Similarity Score Calculation
+    ↓
+Decision:
+    ├── High (≥80%) → Access Granted
+    ├── Medium (50-80%) → OTP Required
+    └── Low (<50%) → Access Denied
+```
+
+## 🎯 Demo Script for Presentation
+
+### Introduction (30 seconds)
+
+> "Today I'm demonstrating EchoLock, an AI-powered behavioral biometric authentication system. Unlike traditional passwords that can be stolen or guessed, EchoLock analyzes HOW you type - your unique typing rhythm that acts like a fingerprint."
+
+### Registration Demo (1 minute)
+
+1. Navigate to Register page
+2. Enter username: "demo_user"
+3. Set PIN: "1234"
+4. Type PIN 5 times naturally
+5. Explain: "The system captures 9 different metrics from each sample and creates an average profile"
+
+### Successful Authentication (1 minute)
+
+1. Go to Login page
+2. Enter same username and PIN
+3. Type at normal speed
+4. Show result: "Access Granted with 85-95% similarity"
+5. Explain: "The AI recognizes my typing pattern and grants immediate access"
+
+### Failed Authentication (1 minute)
+
+1. Ask someone else to try the same PIN
+2. OR type with unusual rhythm (very fast/slow)
+3. Show result: "Access Denied with <50% similarity"
+4. Explain: "Even with the correct PIN, the typing pattern doesn't match"
+
+### OTP Flow (1 minute)
+
+1. Try typing slightly differently (medium speed)
+2. Show result: "OTP Required with 60-75% similarity"
+3. Display the generated OTP
+4. Enter OTP to complete authentication
+5. Explain: "Multi-factor authentication adds security when confidence is medium"
+
+### Technical Explanation (1 minute)
+
+> "The system uses scikit-learn's KNN classifier to compare typing patterns. We extract features like dwell time, flight time, and consistency. The similarity score uses Euclidean distance with exponential decay normalization. All data is stored locally in JSON format."
+
+### Conclusion (30 seconds)
+
+> "EchoLock demonstrates how behavioral biometrics can enhance security without additional hardware. It's lightweight, runs entirely on Flask, and showcases practical AI/ML application in cybersecurity."
+
+## 🔧 Customization
+
+### Adjust Sensitivity
+
+Edit `model.py` line 158:
+```python
+scale = 500  # Increase for more lenient, decrease for stricter
+```
+
+### Change Thresholds
+
+Edit `model.py` line 175-176:
+```python
+threshold_high=80,  # Access granted threshold
+threshold_low=50     # OTP required threshold
+```
+
+### Modify PIN Length
+
+Edit HTML files, change `maxlength` attribute:
+```html
+<input maxlength="6">  <!-- Change to desired length -->
+```
+
+## 🐛 Troubleshooting
+
+**Issue**: "Module not found" error
+- **Solution**: Run `pip install -r requirements.txt`
+
+**Issue**: Port already in use
+- **Solution**: Change port in `app.py`: `app.run(port=5001)`
+
+**Issue**: Similarity always low
+- **Solution**: Type more consistently during registration. The system needs consistent samples.
+
+**Issue**: Changes not reflecting
+- **Solution**: Clear browser cache or hard refresh (Ctrl+F5)
+
+## 📊 Expected Results
+
+| Scenario | Expected Similarity | Result |
+|----------|-------------------|--------|
+| Same user, same rhythm | 85-100% | Access Granted |
+| Same user, tired/different keyboard | 60-80% | OTP Required |
+| Different user, same PIN | 20-45% | Access Denied |
+| Same user, extremely rushed | 40-60% | Access Denied/OTP |
+
+## 📝 Notes
+
+- This is a **demo system** for educational purposes
+- In production, use proper password hashing (bcrypt)
+- For real deployment, implement HTTPS and secure session management
+- The OTP is displayed on screen for demo purposes only
+
+## 🏆 Hackathon Tips
+
+1. **Practice the demo flow** before presenting
+2. **Have a backup user registered** in case of issues
+3. **Show both success and failure cases** to demonstrate security
+4. **Explain the ML concepts** clearly but concisely
+5. **Highlight the real-world applications** (banking, corporate security)
+
+## 📄 License
+
+This project is for educational and demonstration purposes.
+
 ---
 
-## Author
-
-**G Sunil Kumar**  
-Final Year B.Tech - Computer Science & Engineering  
-Specialization: Cybersecurity & Machine Learning  
-
-📧 Email: sk9030973224@gmail.com  
-🔗 LinkedIn: [linkedin.com/in/gsunilkumarcybersecurity](https://www.linkedin.com/in/gsunilkumarcybersecurity)  
-🐙 GitHub: [github.com/skuser404](https://github.com/skuser404)  
-🌐 Portfolio: [My view](https://6grbtklu5fjjy.ok.kimi.link)
-
----
-
-## Acknowledgments
-
-- **Scikit-learn** - Machine learning framework
-- **Flask** - Web framework
-- **Research Papers**:
-  - Monrose, F., & Rubin, A. (2000). "Keystroke dynamics as a biometric for authentication"
-  - Killourhy, K. S., & Maxion, R. A. (2009). "Comparing anomaly-detection algorithms for keystroke dynamics"
-- **Datasets**: CMU Keystroke Dynamics Benchmark Dataset
-
----
-
-## 📞 Support
-
-For questions, issues, or suggestions:
-
-- **GitHub Issues**: [Open an issue](https://github.com/skuser404/EchoLock/issues)
-- **Email**: sk9030973224@gmail.com
-- **Documentation**: Check `/docs` folder
-
----
-
-## 📈 Project Status
-
-![Status](https://img.shields.io/badge/Status-Active-success.svg)
-![Version](https://img.shields.io/badge/Version-1.0.0-blue.svg)
-![Build](https://img.shields.io/badge/Build-Passing-brightgreen.svg)
-
-**Last Updated**: February 2026  
-**Current Version**: 1.0.0  
-**Development Stage**: Production-Ready
-
----
-
-## ⭐ Star History
-
-If this project helped you, please consider giving it a ⭐ on GitHub!
-
----
-
-**Built with 💙 for Cybersecurity Education**
-# EchoLock
+**Built with ❤️ using Flask, Scikit-learn, and JavaScript**
